@@ -6,6 +6,7 @@
 ;   Description: This is server file for web-420 projects and assignments.
 */
 /*jslint node: true */
+"use strict";
 /*jshint esversion: 6 */
 // Calls all modules to be used in this assignment.
 const express = require('express');
