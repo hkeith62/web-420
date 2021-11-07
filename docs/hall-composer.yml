@@ -1,0 +1,151 @@
+openapi: "3.0.0"
+info:
+  title: Composer API
+  version: "1.0"
+paths:
+  /composers
+    description: Directory of Famous composers
+    POST:
+      summary: **Add a new composer**
+      description: |
+        Adds a new composer to the
+        directory of famous composers
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                firstName:
+                  type: string
+                lastName:
+                  type: string
+                dateOfBirth:
+                  type: string
+                placeOfBirth:
+                  type: string
+                recordStartDate:
+                  type: string
+                other:
+                  type: string
+              required:
+                -firstName
+                -lastName
+                -recordStartDate
+      response:
+        "200":
+          description: |
+            The new composer is added to the directory
+            Return a message containing the new composer's
+            name and bio information
+          content:
+            application/json:
+            schema:
+              type: object
+                   description: Composer bio with API generated id
+              items:
+                type: object
+                required:
+                  -composerId
+                  -firstName
+                  -lastName
+                  -recordStartDate
+                properties:
+                  composerId:
+                    type: string
+                  firstName:
+                    type: string
+                  lastName:
+                    type: string
+                  recordStartDate:
+                    type: string
+        "500":
+          description: |
+        "501":
+          description: |
+    GET:
+      summary: **Find a composer by id**
+      description: |
+        Retrieves and displays any composer's
+        name and bio who is in the directory
+        by their id.
+      parameters:
+      - name: id
+        in: path
+        schema:
+        type: string
+        required: true
+        description: |
+         A unique identifier generated
+         and assigned to each composer
+         by the API
+      response:
+        "200":
+          description: |
+            Displays the composer's
+            name and bio that matches
+            the id entered
+          content:
+            application/json:
+            schema:
+              type: object
+              items:
+                type: object
+                  required:
+                    -composerId
+                    -firstName
+                    -lastName
+                    -dateOfBirth
+                    -placeOfBirth
+                    -recordStartDate
+                    -other
+                  properties:
+                    firstName:
+                      type: string
+                    lastName:
+                      type: string
+                    dateOfBirth:
+                      type: string
+                    placeOfBirth:
+                      type: string
+                    recordStartDate:
+                      type: string
+                    other:
+                      type: string
+                        description: Additional details added by the user
+        "500":
+          description: |
+
+        "501":
+          description: |
+    GET:
+      summary: **Find all composers**
+      description: |
+        Retrieves and lists all
+         composers in the directory
+      response:
+        "200":
+          description: |
+            Displays a list of all composers
+          content:
+            application/json:
+            schema:
+              type: array
+                description: An array of composer names
+              items:
+                type: object
+                  required:
+                  -firstName
+                  -lastName
+                  properties:
+                    firstName:
+                      type: string
+                    lastName:
+                      type: string
+        "500":
+          description: |
+
+        "501":
+          description: |
+
