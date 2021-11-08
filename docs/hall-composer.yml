@@ -1,46 +1,21 @@
 openapi: "3.0.0"
 info:
-  title: Composer API
-  version: "1.0"
+  version: "1.0.0"
+  title: "Composer API"
+tags:
+- name: "Composers"
 paths:
-  /composers
-description: Directory of Famous composers
-POST:
-      summary: Add a new composer**
-      description: |
-        Adds a new composer to the
+  /composers:
+    post:
+      summary: Add a new composer
+      description: Adds a new composer to the
         directory of famous composers
-      requestBody:
-        description: Composer bio information
-        content:
-          application/x-www-form-urlencoded:
-            schema:
-              required:
-                - firstName
-                - lastName
-                - recordStartDate
-              type: object
-              properties:
-                firstName:
-                  type: string
-                lastName:
-                  type: string
-                dateOfBirth:
-                  type: string
-                placeOfBirth:
-                  type: string
-                recordStartDate:
-                  type: string
-                other:
-                  description: Any additional details the user wishes to add
-                  type: string
-      response:
+      responses:
         "200":
           description: |
             The new composer is added to the directory
             Return a message containing the new composer's
             name, start date, and id
-          content:
             application/json:
             schema:
               type: object
@@ -64,28 +39,20 @@ POST:
                     type: string
         "500":
           description: Internal Server Error
-          content:
             application/json
-          schema:
-                type: string
         "501":
           description: |
             Not Implemented
             The server does not support the functionality required to fulfill the request
-          content:
             application/json
-          schema:
-                type: string
-GET:
-      summary: Find all composers**
-      description: |
-        Retrieves and lists all
+    get:
+      summary: "Find all composers"
+      description: Retrieves and lists all
          composers in the directory
-      response:
+      responses:
         "200":
           description: |
             Displays a list of all composers
-          content:
             application/json:
             schema:
               type: array
@@ -102,48 +69,39 @@ GET:
                       type: string
         "500":
           description: Internal Server Error
-          content:
             application/json
-          schema:
-                type: string
         "501":
           description: |
             Not Implemented
             The server does not support the functionality required to fulfill the request
-          content:
             application/json
-          schema:
-                type: string
-description: Directory of Famous composers
-GET:
-      summary: Find a composer by id**
-      description: |
-        Retrieves and displays any composer's
+  /composers/{id}:
+    get:
+      summary: "Finds a composer by id"
+      description: Retrieves and displays any composer's
         name and bio who is in the directory
-        by their id.
+        by their id
       parameters:
       - name: id
         in: path
         schema:
-        type: string
         required: true
         description: |
          A unique identifier generated
          and assigned to each composer
          by the API
-      response:
-        "200":
+      responses:
+         "200":
           description: |
             Displays the composer's
             name and bio that matches
             the id entered
-          content:
             application/json:
             schema:
               type: object
               items:
                 type: object
-                  required:
+                required:
                     - composerId
                     - firstName
                     - lastName
@@ -151,7 +109,7 @@ GET:
                     - placeOfBirth
                     - recordStartDate
                     - other
-                  properties:
+                properties:
                     firstName:
                       type: string
                     lastName:
@@ -165,15 +123,5 @@ GET:
                     other:
                       description: Any additional details the user wishes to add
                       type: string
-        "500":
-          description: Internal Server Error
-          content:
-              schema:
-                type: string
-        "501":
-          description: |
-            Not Implemented
-            The server does not support the functionality required to fulfill the request
-          content:
-              schema:
-                type: string
+      
+   

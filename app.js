@@ -30,7 +30,7 @@ const options = {definition: {openApi: '3.0.0', info: {title: 'WEB 420 RESTful A
 
 const openApiSpecification = swaggerJSDoc(options); // Creates new openApiSpec variable that calls the swaggerJsdoc library with the options literal.
 
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(openApiSpecification)); // openApiSpecification variable is wired to the app variable.
+app.use('/api-docs/', swaggerUi.serve, swaggerUi.setup(openApiSpecification)); // openApiSpecification variable is wired to the app variable.
 
 http.createServer(app).listen(app.get('port'), function () {
     console.log('Application started on port ' + app.get('port')); // Starts the server listening on port 3000 using ('port') variable.
