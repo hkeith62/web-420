@@ -85,6 +85,7 @@ paths:
       - name: id
         in: path
         schema:
+          type: string
         required: true
         description: |
          A unique identifier generated
