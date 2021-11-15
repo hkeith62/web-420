@@ -1,39 +1,59 @@
 /*
-;   Title: WEB 340 –  Node.js
-;   Author: Professor Krasso
-;   Date:10/21/2021
-;   Modified By: Keith Hall
-;   Description: This is server file for web-420 projects and assignments.
+============================================
+; Title:  Web 420- RESTFul API's
+; Author: Professor Krasso
+; Date: 11/12/2021
+; Modified By: Keith Hall
+; Description: Main server file for web-420 Composer API.
+;===========================================
 */
 /*jslint node: true */
-"use strict";
-/*jshint esversion: 6 */
+'use strict';
 // Calls all modules to be used in this assignment.
-const express = require('express');
-const http = require('http');
-const swaggerUi = require('swagger-ui-express');
-const swaggerJSDoc = require('swagger-jsdoc');
-const mongoose = require('mongoose');
-const logger = require('morgan');
+var express = require('express');
+var http = require('http');
+var swaggerUi = require('swagger-ui-express'); // Set up ui and serve document
+var swaggerJsdoc = require('swagger-jsdoc');  // Generate Swagger specification
+var mongoose = require('mongoose');
+var composerAPI = require('./routes/hall-composer-routes');
 
-const app = express(); // Creates an express application and puts it inside the app variable.
+var app = express();   // Creates an express application and puts it inside the app variable.
 
-app.set('port', process.env.PORT || 3000); //Tells server what port to listen on.
+app.set('port', process.env.PORT || 3000);
 
-app.use(express.json()); // Parses JSON request objects.
-app.use(express.urlencoded({'extended': true})); // Parses incoming requests encoded in the url as a string or an array.
-app.use(logger("short")); // Morgan logger
+app.use(express.json());   // Parses JSON request objects.
+app.use(express.urlencoded({'extended': true}));  // Parses incoming requests encoded in the url as a string or an array.
 
-// Create an object literal.
-const options = {definition: {openApi: '3.0.0', info: {title: 'WEB 420 RESTful APIs', version: '1.0.0'}},
-        apis: ['./routes*.js']};
+ //MongoDB Atlas connection string
+var mongoDB = 'mongodb+srv://superadmin:s3cret@cluster0.lujih.mongodb.net/web420DB?retryWrites=true&w=majority';
 
-const openApiSpecification = swaggerJSDoc(options); // Creates new openApiSpec variable that calls the swaggerJsdoc library with the options literal.
+mongoose.connect(mongoDB, {
+    promiseLibrary: require('bluebird'),
+    useUnifiedTopology: true,
+    useNewUrlParser: true
 
-app.use('/api-docs/', swaggerUi.serve, swaggerUi.setup(openApiSpecification, { explorer: true })); // openApiSpecification variable is wired to the app variable.
+}).then(() => {
+    console.log(`Connection to MongoDB Atlas successful`);
+}).catch(err => {
+    console.log(`MongoDB Error: ${err.message}`);
+})
 
-http.createServer(app).listen(app.get('port'), function () {
-    console.log('Application started on port ' + app.get('port')); // Starts the server listening on port 3000 using ('port') variable.
-});
+var options = {
+    definition: {
+        openapi: '3.0.0',
+        info: {
+            title: 'WEB 420 RESTful APIs',
+            version: '1.0.0',
+        },
+    },
+    apis: ['./routes/*.js'], // file containing annotations for the OpenAPI Specification
+};
 
+const openapiSpecification = swaggerJsdoc(options); // Options definitions are converted into swagger docs and held in variable.
 
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(openapiSpecification, {explorer: true})); // Serve Swagger specification at api- docs, Explorer api search.
+app.use('/api', composerAPI);
+
+http.createServer(app).listen(app.get('port'), function() {
+    console.log(`Application started and listening on port ${app.get('port')}`); // Starts the server listening on port 3000 using ('port') variable.
+})

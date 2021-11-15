@@ -21,16 +21,16 @@ paths:
                 items:
                   $ref: '#/components/schemas/inline_response_200'
         "500":
-          description: Internal Server Error
-        "501":
           description: |
-            Not Implemented
-            The server does not support the functionality required to fulfill the request
+             Server encountered an internal error 
+             and is currently unable to handle your request
+        "501":
+          description: Server does not support the request
     post:
       summary: Add a new composer
       tags:
         - Composers
-      description: Adds a new composer to the directory of famous composers
+      description: Adds a new composer to the directory.
       requestBody:
         description: Composer bio information
         content:
@@ -51,11 +51,12 @@ paths:
                 items:
                   $ref: '#/components/schemas/inline_response_200_1'
         "500":
-          description: Internal Server Error
-        "501":
           description: |
-            Not Implemented
-            The server does not support the functionality required to fulfill the request
+            Server encountered an internal error 
+            and is currently unable to handle your request
+        "501":
+          description: Server does not support the request
+             
   /composers/{id}:
     get:
       summary: Finds a composer by id
@@ -87,11 +88,11 @@ paths:
                 items:
                   $ref: '#/components/schemas/inline_response_200_2'
         "500":
-          description: Internal Server Error
+          description: |
+            Server encountered an unexpected error 
+            and is currently unable to handle your request
         "501":
-          description: |-
-            Not Implemented
-            The server does not support the functionality required to fulfill the request
+          description: Server does not support the request 
 components:
   schemas:
     inline_response_200:
