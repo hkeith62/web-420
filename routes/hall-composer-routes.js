@@ -177,7 +177,7 @@ router.get('/composers', async(req, res) => {
  *           * The new composer record is added to the directory
  *           * Returns confirmation message containing the composer's id, name,
  *           and record entry date.
- *       '404':
+ *       '400':
  *         description: A problem has occurred. Name, id, and entry date are required
  *       '500':
  *         description: Server encountered an unexpected error
@@ -193,7 +193,7 @@ router.post('/composers', async(req, res) => {
         await Composer.create(newComposer, function(err, composer) {
             if (err) {
                 console.log(err);
-                res.status(404).send({
+                res.status(400).send({
                     'message': `A problem has occurred. Name, id, and entry date are required. ${err}`
                 })
             } else {

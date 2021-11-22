@@ -16,6 +16,7 @@ var swaggerUi = require('swagger-ui-express'); // Set up ui and serve document
 var swaggerJsdoc = require('swagger-jsdoc');  // Generate Swagger specification
 var mongoose = require('mongoose');
 var composerAPI = require('./routes/hall-composer-routes');
+var personAPI = require('./routes/hall-person-routes');
 
 var app = express();   // Creates an express application and puts it inside the app variable.
 
@@ -53,6 +54,7 @@ const openapiSpecification = swaggerJsdoc(options); // Options definitions are c
 
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(openapiSpecification, {explorer: true})); // Serve Swagger specification at api- docs, Explorer api search.
 app.use('/api', composerAPI);
+app.use('/api', personAPI);
 
 http.createServer(app).listen(app.get('port'), function() {
     console.log(`Application started and listening on port ${app.get('port')}`); // Starts the server listening on port 3000 using ('port') variable.
