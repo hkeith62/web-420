@@ -13,10 +13,10 @@ var Schema = mongoose.Schema; // Use Mongoose for composer model.
 // Composer Model
 let composerSchema = new Schema({
 
-    composerId: {type: Number, required: true},
-    firstName: {type: String, required: true},
-    lastName: {type: String, required: true},
-    date_created: {type: String, required: true}
+    composerId: {type: Number},
+    firstName: {type: String},
+    lastName: {type: String},
+    date_created: {type: String}
 
 });
 

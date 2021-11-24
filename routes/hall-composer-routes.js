@@ -187,7 +187,10 @@ router.get('/composers', async(req, res) => {
 router.post('/composers', async(req, res) => {
     try {
         const newComposer = {
-            type: req.body.type
+            firstName: req.body.firstName,
+            lastName: req.body.lastName,
+            composerId: req.body.composerId,
+            date_created: req.body.date_created
         }
 
         await Composer.create(newComposer, function(err, composer) {
