@@ -4,7 +4,7 @@
 ;   Author: Professor Krasso
 ;   Date: 11/20/2021
 ;   Modified By: Keith Hall
-;   Description: Schemas, Person Model exported for use in the app.
+;   Description: Database model, Person Schema exported for use in the app.
 ===========================================
 */
 var mongoose = require('mongoose');

@@ -4,7 +4,7 @@
 ; Author: Professor Krasso
 ; Date: 11/12/2021
 ; Modified By: Keith Hall
-; Description: Composer schema and database model.
+; Description: Database model, Composer Schema.
 ;===========================================
 */
 var mongoose = require('mongoose');

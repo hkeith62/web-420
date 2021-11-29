@@ -42,7 +42,7 @@ var Person = require('../models/hall-person');
  *       '200':
  *          description: New person record is added to MongoDB.
  *       '400':
- *         description: A problem has occurred. Full name and date of birth are required
+ *         description: A problem has occurred. Full name and date of birth are required fields
  *       '501':
  *         description: MongoDB exception
  *       '500':
@@ -50,8 +50,8 @@ var Person = require('../models/hall-person');
  */
  router.post('/persons', async(req, res) => {
     try {
+        // JavaScript object containing the key-value pairs submitted in the request body
         const newPerson = {
-
             firstName: req.body.firstName,
             lastName: req.body.lastName,
             text: req.body.text,
@@ -62,7 +62,7 @@ var Person = require('../models/hall-person');
             if (err) {
                 console.log(err);
                 res.status(400).send({
-                    'message': `A problem has occurred. Full name and date of birth are required. ${err}`
+                    'message': `A problem has occurred. Full name and date of birth are required fields ${err}`
                 })
             } else {
                 console.log(person);
@@ -74,7 +74,7 @@ var Person = require('../models/hall-person');
         res.status(501).send({
             'message': `MongoDB exception ${e.message}`
         }),
-        res.status(501).send({
+        res.status(500).send({
             'message': `Server has encountered an unexpected error ${e.message}`
         })
     }

@@ -17,12 +17,13 @@ var swaggerJsdoc = require('swagger-jsdoc');  // Generate Swagger specification
 var mongoose = require('mongoose');
 var composerAPI = require('./routes/hall-composer-routes');
 var personAPI = require('./routes/hall-person-routes');
+var userAPI = require('./routes/hall-session-routes');
 
 var app = express();   // Creates an express application and puts it inside the app variable.
 
 app.set('port', process.env.PORT || 3000);
 
-app.use(express.json());   // Parses JSON request objects.
+app.use(express.json());   // Returns express middleware that parses http request bodies into js objects.
 app.use(express.urlencoded({'extended': true}));  // Parses incoming requests encoded in the url as a string or an array.
 
  //MongoDB Atlas connection string
@@ -55,6 +56,7 @@ const openapiSpecification = swaggerJsdoc(options); // Options definitions are c
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(openapiSpecification, {explorer: true})); // Serve Swagger specification at api- docs, Explorer api search.
 app.use('/api', composerAPI);
 app.use('/api', personAPI);
+app.use('/api', userAPI);
 
 http.createServer(app).listen(app.get('port'), function() {
     console.log(`Application started and listening on port ${app.get('port')}`); // Starts the server listening on port 3000 using ('port') variable.

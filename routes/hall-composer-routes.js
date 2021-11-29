@@ -4,7 +4,7 @@
 ;   Author: Professor Krasso
 ;   Date: 11/08/2021
 ;   Modified By: Keith Hall
-;   Description: This file defines the endpoints for the composer API.
+;   Description: This file defines the endpoints for the Composer API.
 ===========================================
 */
 // Required modules
@@ -105,8 +105,10 @@ router.get('/composers', async(req, res) => {
  *                 - placeOfBirth
  *                 - date_record_created
  *                 - other
- *       '404':
+ *       '401':
  *         description: A problem occurred. Please check id
+ *       '400':
+ *         description: Id is a required field
  *       '500':
  *         description: Server has encountered an unexpected error
  *       '501':
@@ -117,7 +119,7 @@ router.get('/composers', async(req, res) => {
         Composer.findById(req.params.id, function(err, composer) {
             if (err) {
                 console.log(err);
-                res.status(404).send({
+                res.status(401).send({
                     'message': `A problem occurred. Please check id. ${err}`
                 })
             } else {
@@ -127,12 +129,15 @@ router.get('/composers', async(req, res) => {
         })
     } catch (e) {
         console.log(e);
+        res.status(400).send({
+            'message': `Id is a required field ${e.message}`
+        }),
         res.status(500).send({
             'message': `Server has encountered an unexpected error ${e.message}`
         }),
         res.status(501).send({
-            'message': `MongoDB exception ${e.message}`
-        })
+              'message': `MongoDB exception ${e.message}`
+    })
     }
 })
 /**
@@ -186,13 +191,14 @@ router.get('/composers', async(req, res) => {
  */
 router.post('/composers', async(req, res) => {
     try {
+        // JavaScript object containing the key-value pairs submitted in the request body
         const newComposer = {
             firstName: req.body.firstName,
             lastName: req.body.lastName,
             composerId: req.body.composerId,
             date_created: req.body.date_created
         }
-
+        // Accesses parsed request bodies
         await Composer.create(newComposer, function(err, composer) {
             if (err) {
                 console.log(err);
