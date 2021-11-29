@@ -4,7 +4,7 @@
 ;   Author: Professor Krasso
 ;   Date: 11/26/2021
 ;   Modified By: Keith Hall
-;   Description: This file defines the endpoints for the User API.
+;   Description: This file defines the endpoints for the Signup and Login APIs.
 ===========================================
 */
 // Required modules
@@ -69,11 +69,11 @@ var saltRounds = 10;
             emailAddress: req.body.emailAddress
         }
 
-        User.findOne({'userName': req.body.userName}, function(err, user) {
+        User.findOne({'userName': req.body.userName}, function(err, user) { // Search MongDB for username
 
             if (User) {
 
-               User.create(newRegisteredUser, function(err, user) {
+               User.create(newRegisteredUser, function(err, user) {  // Create username
 
                     console.log(user);
                     res.json(user);
@@ -89,7 +89,7 @@ var saltRounds = 10;
             }
         })
 
-            if (!User) {
+            if (!User) {          // If username already exists
 
                 console.log(err);
                 res.status(401).send({
@@ -109,7 +109,7 @@ var saltRounds = 10;
     }
 })
 /**
- * verify-password
+ * login/verify-password
  * @openapi
  * /api/login:
  *   post:
@@ -156,7 +156,7 @@ var saltRounds = 10;
 
                 var passwordIsValid = bcrypt.compareSync(req.body.password, user.password); // Compare requestBody password with user password
 
-                if (passwordIsValid) {
+                if (passwordIsValid) {  // If password matches
 
                     console.log('Password matches');
                     res.status(200).send({
@@ -175,7 +175,7 @@ var saltRounds = 10;
             }
         })
 
-            if (User) {
+            if (User) {    // If username entered does not exist
 
                 console.log('Invalid Username');
                 res.status(401).send({

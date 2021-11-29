@@ -103,7 +103,7 @@ var Person = require('../models/hall-person');
  */
  router.get('/persons', async(req, res) => {
     try {
-        Person.find({}, function(err, persons) {
+        Person.find({}, function(err, persons) {      // Search MongoDB for Person document
             if (err) {
                 console.log(err);
                 res.status(501).send({
@@ -121,5 +121,5 @@ var Person = require('../models/hall-person');
         })
     }
 })
-
+// Export this module
 module.exports = router;
