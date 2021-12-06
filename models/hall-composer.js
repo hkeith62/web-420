@@ -4,14 +4,15 @@
 ; Author: Professor Krasso
 ; Date: 11/12/2021
 ; Modified By: Keith Hall
-; Description: Database model, Composer Schema.
+; Description: Composer model and Schema.
 ;===========================================
 */
+// Require and use Mongoose for Customer schema.
 var mongoose = require('mongoose');
-var Schema = mongoose.Schema; // Use Mongoose for composer model.
+var Schema = mongoose.Schema;
 
-// Composer Model
-let composerSchema = new Schema({
+// Schema defining structure of the Composer document and binds to variable
+var composerSchema = new Schema({
 
     composerId: {type: Number},
     firstName: {type: String},
@@ -22,5 +23,5 @@ let composerSchema = new Schema({
 
 // Define model
 var Composer = mongoose.model('Composer', composerSchema); // Mongoose maps composerSchema to Composer model.
-module.exports = Composer;  // Makes this model accessible from other JavaScript files.
+module.exports = Composer;  // Exports this model for accessibility from other JavaScript files.
 

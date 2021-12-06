@@ -30,12 +30,18 @@ var Person = require('../models/hall-person');
  *             required:
  *               - firstName
  *               - lastName
+ *               - roles
+ *               - dependents
  *               - birthDate
  *             properties:
  *               firstName:
  *                 type: string
  *               lastName:
  *                 type: string
+ *               roles:
+ *                 type: array
+ *               dependents:
+ *                 type: array
  *               birthDate:
  *                 type: string
  *     responses:
@@ -55,7 +61,8 @@ var Person = require('../models/hall-person');
             firstName: req.body.firstName,
             lastName: req.body.lastName,
             text: req.body.text,
-            dependents: req.body.dependents
+            dependents: req.body.dependents,
+            birthDate: req.body.birthDate
         }
 
         await Person.create(newPerson, function(err, person) {

@@ -9,8 +9,9 @@
 */
 // Required modules
 var express = require('express');
-var router = express.Router();
 var Composer = require('../models/hall-composer');
+
+var router = express.Router();
 
 // OpenAPI Specification
 /**
@@ -47,8 +48,10 @@ var Composer = require('../models/hall-composer');
  *         description: Server has encountered an unexpected error
  */
 router.get('/composers', async(req, res) => {
+
     try {
-        Composer.find({}, function(err, composers) {
+        
+        Composer.find({}, function(err, composers) {  // Searches composer documents
             if (err) {
                 console.log(err);
                 res.status(500).send({
@@ -88,9 +91,8 @@ router.get('/composers', async(req, res) => {
  *     responses:
  *       '200':
  *          description: |
- *            Returns the composer's name
- *            and biographical record that matches
- *            the id entered.
+ *            Returns the composer record
+ *            that matches the id entered.
  *          content:
  *           application/json:
  *             schema:
@@ -180,8 +182,7 @@ router.get('/composers', async(req, res) => {
  *       '200':
  *          description: |
  *           * The new composer record is added to the directory
- *           * Returns confirmation message containing the composer's id, name,
- *           and record entry date.
+ *           * Returns confirmation message
  *       '400':
  *         description: A problem has occurred. Name, id, and entry date are required
  *       '500':
@@ -202,7 +203,7 @@ router.post('/composers', async(req, res) => {
         await Composer.create(newComposer, function(err, composer) {
             if (err) {
                 console.log(err);
-                res.status(400).send({
+                res.status(500).send({
                     'message': `A problem has occurred. Name, id, and entry date are required. ${err}`
                 })
             } else {

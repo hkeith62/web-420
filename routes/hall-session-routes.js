@@ -43,7 +43,7 @@ var saltRounds = 10;
  *                 type: array
  *     responses:
  *       '200':
- *          description: User information was added to MongoDB.
+ *          description: User was added to MongoDB.
  *       '400':
  *         description: A problem has occurred. Username is a required field
  *       '401':
@@ -73,9 +73,9 @@ var saltRounds = 10;
 
             if (User) {
 
-               User.create(newRegisteredUser, function(err, user) {  // Create username
+               User.create(newRegisteredUser, function(err, user) {  // Create new user
 
-                    console.log(user);
+                    console.log('User added to MongoDB');
                     res.json(user);
                 })
 
