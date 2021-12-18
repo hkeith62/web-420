@@ -19,6 +19,7 @@ var composerAPI = require('./routes/hall-composer-routes');
 var personAPI = require('./routes/hall-person-routes');
 var userAPI = require('./routes/hall-session-routes');
 var customerAPI = require('./routes/hall-node-shopper-routes');
+var teamAPI = require('./routes/hall-team-routes');
 
 var app = express();   // Creates an express application and puts it inside the app variable.
 
@@ -59,6 +60,7 @@ app.use('/api', composerAPI);
 app.use('/api', personAPI);
 app.use('/api', userAPI);
 app.use('/api', customerAPI);
+app.use('/api', teamAPI);
 
 http.createServer(app).listen(app.get('port'), function() {
     console.log(`Application started and listening on port ${app.get('port')}`); // Starts the server listening on port 3000 using ('port') variable.

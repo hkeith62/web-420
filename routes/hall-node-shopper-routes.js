@@ -108,7 +108,7 @@ var router = express.Router();
 /**
  * createInvoiceByUserName
  * @openapi
- * /api/customers/invoices/{username}:
+ * /api/customers/{userName}/invoices:
  *   post:
  *     tags:
  *       - Customers

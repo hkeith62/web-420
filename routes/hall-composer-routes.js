@@ -4,7 +4,7 @@
 ;   Author: Professor Krasso
 ;   Date: 11/08/2021
 ;   Modified By: Keith Hall
-;   Description: This file defines the endpoints for the Composer API.
+;   Description: Composer API
 ===========================================
 */
 // Required modules
@@ -30,19 +30,22 @@ var router = express.Router();
  *           application/json:
  *             schema:
  *             type: array
- *             description: Array of composers by id, firstName, and lastName
+ *             description: List composers by id, firstName, lastName, and date record was created
  *             items:
  *               type: array
  *               required:
  *                 - composerId
  *                 - firstName
  *                 - lastName
+ *                 - date_record_created
  *               properties:
  *                 composerId:
  *                   type: number
  *                 firstName:
  *                   type: string
  *                 lastName:
+ *                   type: string
+ *                 date_created:
  *                   type: string
  *       '500':
  *         description: Server has encountered an unexpected error
@@ -76,18 +79,18 @@ router.get('/composers', async(req, res) => {
  *   get:
  *     tags:
  *       - Composers
- *     description: Finds and displays the composer's name and biographical record using id.
+ *     description: Finds and displays the composer's MongoDB record using id.
  *     summary: Find a composer by id
  *     parameters:
  *       - name: id
  *         in: path
  *         required: true
  *         description: |
- *           A unique 7 digit identifier generated
+ *           A unique identifier generated
  *           and assigned to each composer
- *           by the user.
+ *           by MongoDB.
  *         schema:
- *           type: number
+ *           type: string
  *     responses:
  *       '200':
  *          description: |
@@ -96,21 +99,16 @@ router.get('/composers', async(req, res) => {
  *          content:
  *           application/json:
  *             schema:
- *               type: array
+ *               type: string
  *               items:
  *                 type: object
  *               required:
  *                 - composerId
  *                 - firstName
  *                 - lastName
- *                 - dateOfBirth
- *                 - placeOfBirth
- *                 - date_record_created
- *                 - other
+ *                 - date_created
  *       '401':
  *         description: A problem occurred. Please check id
- *       '400':
- *         description: Id is a required field
  *       '500':
  *         description: Server has encountered an unexpected error
  *       '501':
@@ -118,12 +116,17 @@ router.get('/composers', async(req, res) => {
  */
  router.get('/composers/:id', async(req, res) => {
     try {
-        Composer.findById(req.params.id, function(err, composer) {
+        Composer.findOne({'_id': req.params.id}, function(err, composer) {
             if (err) {
+
                 console.log(err);
                 res.status(401).send({
-                    'message': `A problem occurred. Please check id. ${err}`
-                })
+                    'message': `A problem occurred. Please check id ${err}`
+                }),
+                res.status(501).send({
+                    'message': `MongoDB exception ${e.message}`
+              })
+
             } else {
                 console.log(composer);
                 res.json(composer);
@@ -131,15 +134,12 @@ router.get('/composers', async(req, res) => {
         })
     } catch (e) {
         console.log(e);
-        res.status(400).send({
-            'message': `Id is a required field ${e.message}`
+        res.status(401).send({
+            'message': `A problem occurred. Id is a required field ${e.message}`
         }),
         res.status(500).send({
             'message': `Server has encountered an unexpected error ${e.message}`
-        }),
-        res.status(501).send({
-              'message': `MongoDB exception ${e.message}`
-    })
+        })
     }
 })
 /**
@@ -154,13 +154,13 @@ router.get('/composers', async(req, res) => {
  *     requestBody:
  *       description: Composer biographical record.
  *       content:
- *         application/x-www-form-urlencoded:
+ *         application/json:
  *           schema:
  *             required:
  *               - composerId
  *               - firstName
  *               - lastName
- *               - date_record_created
+ *               - date_created
  *             properties:
  *               composerId:
  *                 type: number
@@ -168,23 +168,14 @@ router.get('/composers', async(req, res) => {
  *                 type: string
  *               lastName:
  *                 type: string
- *               date_record_created:
+ *               date_created:
  *                 description: new Date();
- *                 type: string
- *               dateOfBirth:
- *                 type: string
- *               placeOfBirth:
- *                 type: string
- *               other:
- *                 description: Any additional details the user wishes to add
  *                 type: string
  *     responses:
  *       '200':
  *          description: |
  *           * The new composer record is added to the directory
  *           * Returns confirmation message
- *       '400':
- *         description: A problem has occurred. Name, id, and entry date are required
  *       '500':
  *         description: Server encountered an unexpected error
  *       '501':
@@ -203,11 +194,11 @@ router.post('/composers', async(req, res) => {
         await Composer.create(newComposer, function(err, composer) {
             if (err) {
                 console.log(err);
-                res.status(500).send({
-                    'message': `A problem has occurred. Name, id, and entry date are required. ${err}`
+                res.status(501).send({
+                    'message': `MongoDB Exception. ${err}`
                 })
             } else {
-                console.log(composer);
+                console.log(`Composer Added to MongoDB ${composer}`);
                 res.json(composer);
             }
         })
@@ -215,9 +206,6 @@ router.post('/composers', async(req, res) => {
         console.log(e);
         res.status(500).send({
             'message': `Server has encountered an unexpected error ${e.message}`
-        }),
-        res.status(501).send({
-            'message': `MongoDB exception ${e.message}`
         })
     }
 })
@@ -258,9 +246,11 @@ router.post('/composers', async(req, res) => {
  */
  router.put('/composers/:id', async (req, res) => {
     try {
-        const composerDocId = req.params.id;
+
+        var composerDocId = req.params.id;
 
         Composer.findOne({'_id': composerDocId}, function(err, composer) {
+
             if (err) {
                 console.log(err);
                 res.status(501).send({
@@ -288,7 +278,7 @@ router.post('/composers', async(req, res) => {
     } catch (e) {
         console.log(e);
         res.status(500).send({
-            'message': `Server Exception: ${e.message}`
+            'message': `Server has encountered an unexpected error: ${e.message}`
         })
     }
 })
@@ -312,6 +302,8 @@ router.post('/composers', async(req, res) => {
  *     responses:
  *       '200':
  *         description: Composer Deleted
+ *       '401':
+ *         description: A problem occurred. Please check id
  *       '500':
  *         description: Server Exception
  *       '501':
@@ -323,7 +315,11 @@ router.post('/composers', async(req, res) => {
 
         Composer.findByIdAndDelete({'_id': composerDocId}, function(err, composer) {
             if (err) {
+
                 console.log(err);
+                res.status(401).send({
+                    'message': `A problem occurred. Please check id: ${err}`
+                }),
                 res.status(501).send({
                     'message': `MongoDB Exception: ${err}`
                 })
@@ -333,9 +329,13 @@ router.post('/composers', async(req, res) => {
             }
         })
     } catch (e) {
+
         console.log(e);
+        res.status(401).send({
+            'message': `A problem occurred. Please check id ${e.message}`
+        }),
         res.status(500).send({
-            'message': `Server Exception: ${e.message}`
+            'message': `Server has encountered an unexpected error: ${e.message}`
         })
     }
 })

@@ -19,11 +19,12 @@ var Person = require('../models/hall-person');
  * /api/persons:
  *   post:
  *     tags:
- *       - Persons
- *     description: Creates new person in MongoDB.
- *     summary: Add a new person.
+ *       - Person
+ *     name: createPerson
+ *     description: API for adding a new person document to MongoDB Atlas
+ *     summary: Creates a new person document
  *     requestBody:
- *       description: Person information.
+ *       description: Person information
  *       content:
  *         application/json:
  *           schema:
@@ -34,16 +35,29 @@ var Person = require('../models/hall-person');
  *               - dependents
  *               - birthDate
  *             properties:
- *               firstName:
+ *              firstName:
  *                 type: string
- *               lastName:
+ *              lastName:
  *                 type: string
- *               roles:
- *                 type: array
- *               dependents:
- *                 type: array
- *               birthDate:
- *                 type: string
+ *              roles:
+ *                  type: array
+ *                  items:
+ *                      type: object
+ *                      properties:
+ *                          text:
+ *                              type: string
+ *              dependents:
+ *                  type: array
+ *                  items:
+ *                      type: object
+ *                      properties:
+ *                          firstName:
+ *                              type: string
+ *                          lastName:
+ *                              type: string
+ *              birthDate:
+ *                  type: string
+ *
  *     responses:
  *       '200':
  *          description: New person record is added to MongoDB.
@@ -57,13 +71,14 @@ var Person = require('../models/hall-person');
  router.post('/persons', async(req, res) => {
     try {
         // JavaScript object containing the key-value pairs submitted in the request body
+
         const newPerson = {
             firstName: req.body.firstName,
             lastName: req.body.lastName,
-            text: req.body.text,
+            roles: req.body.roles,
             dependents: req.body.dependents,
-            birthDate: req.body.birthDate
-        }
+            birthDate: req.body.birthDate,
+          };
 
         await Person.create(newPerson, function(err, person) {
             if (err) {
@@ -72,7 +87,7 @@ var Person = require('../models/hall-person');
                     'message': `A problem has occurred. Full name and date of birth are required fields ${err}`
                 })
             } else {
-                console.log(person);
+                console.log(`Person added to MongoDB ${person}`);
                 res.json(person);
             }
         })
@@ -92,7 +107,7 @@ var Person = require('../models/hall-person');
  * /api/persons:
  *   get:
  *     tags:
- *       - Persons
+ *       - Person
  *     description: Returns a list of all Persons in the MongoDB.
  *     summary: List all persons
  *     responses:

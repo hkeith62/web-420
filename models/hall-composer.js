@@ -17,8 +17,7 @@ var composerSchema = new Schema({
     composerId: {type: Number},
     firstName: {type: String},
     lastName: {type: String},
-    date_created: {type: String}
-
+    date_created: {type: String, default: new Date()}
 });
 
 // Define model

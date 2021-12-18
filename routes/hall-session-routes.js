@@ -10,8 +10,7 @@
 // Required modules
 var express = require('express');
 var User = require('../models/hall-user');
-var bcrypt = require('bcrypt');
-
+var bcrypt = require('bcryptjs');
 var router = express.Router();
 var saltRounds = 10;
 
@@ -22,25 +21,25 @@ var saltRounds = 10;
  * /api/signup:
  *   post:
  *     tags:
- *       - Sign Up
- *     description: Registers a new User Account in MongoDB.
- *     summary: Sign up a user.
+ *       - Users
+ *     description: Registers a new user account in MongoDB.
+ *     summary: Sign up a new user.
  *     requestBody:
- *       description: User Account access information.
+ *       description: Account access information.
  *       content:
  *         application/json:
  *           schema:
  *             required:
  *               - userName
- *               - Password
+ *               - password
  *               - emailAddress
  *             properties:
  *               userName:
  *                 type: string
- *               Password:
+ *               password:
  *                 type: string
  *               emailAddress:
- *                 type: array
+ *                 type: string
  *     responses:
  *       '200':
  *          description: User was added to MongoDB.
@@ -53,11 +52,9 @@ var saltRounds = 10;
  *       '500':
  *         description: Server has encountered an unexpected error
  */
- router.post('/signup', async (req, res) => {
+ router.post('/signup', async(req, res) => {
 
     try {
-
-        var err = 'Try again!';
 
         var hashedPassword = bcrypt.hashSync(req.body.password, saltRounds); // salt/hash the password
 
@@ -65,9 +62,9 @@ var saltRounds = 10;
         var newRegisteredUser = {
 
             userName: req.body.userName,
-            Password: hashedPassword,
+            password: hashedPassword,
             emailAddress: req.body.emailAddress
-        }
+        };
 
         User.findOne({'userName': req.body.userName}, function(err, user) { // Search MongDB for username
 
@@ -75,16 +72,16 @@ var saltRounds = 10;
 
                User.create(newRegisteredUser, function(err, user) {  // Create new user
 
-                    console.log('User added to MongoDB');
+                    console.log(`User added to MongoDB ${user}`);
                     res.json(user);
                 })
 
             }else{
 
                 console.log(err);
-                res.status(500).send({
+                res.status(501).send({
 
-                    'message': `Server has encountered an unexpected error ${err.message}`
+                    'message': `MongoDB Exception ${err.message}`
                 })
             }
         })
@@ -101,103 +98,108 @@ var saltRounds = 10;
     } catch (err) {
         console.log(err);
         res.status(400).send({
-            'message': `A problem has occurred. Username and Password are required fields. ${err.message}`
+            'message': `A problem has occurred. Username and password are required fields. ${err.message}`
         })
-        res.status(501).send({
-            'message': `MongoDB exception ${err.message}`
+        res.status(500).send({
+            'message': `Server has encountered an unexpected error${err.message}`
         })
     }
 })
+
 /**
- * login/verify-password
+ * login
  * @openapi
  * /api/login:
  *   post:
  *     tags:
- *       - Login
- *     summary: Login users for account access
+ *       - Users
+ *     name: login
+ *     summary: User login
  *     requestBody:
- *       description: Login information
+ *       description: User information
  *       content:
  *         application/json:
  *           schema:
  *             required:
  *               - userName
- *               - Password
- *               - emailAddress
+ *               - password
  *             properties:
  *               userName:
  *                 type: string
- *               Password:
+ *               password:
  *                 type: string
- *               emailAddress:
- *                 type: array
  *     responses:
  *       '200':
- *         description: User is logged in
+ *         description: User logged in
  *       '401':
  *         description: Invalid username or password
- *       '400':
- *         description: Username and password are required fields
+ *       '500':
+ *         description: Server Exception
  *       '501':
  *         description: MongoDB Exception
- *       '500':
- *         description: Server has encountered an unexpected error
  */
  router.post('/login', async(req, res) => {
 
     try {
 
-        var err = 'Try again!';
-
         User.findOne({'userName': req.body.userName}, function(err, user) {
 
-            if (!User) {
+            if (err) {
 
-                var passwordIsValid = bcrypt.compareSync(req.body.password, user.password); // Compare requestBody password with user password
+                res.status(501).send({
+                    'message': `MongoDB Exception: ${err}`
+                })
 
-                if (passwordIsValid) {  // If password matches
+            } else {
+
+                console.log(user)
+
+            if (!user) {
+
+                let passwordIsValid = bcrypt.compareSync(req.body.password, user.password);
+
+                if (passwordIsValid) {
 
                     console.log('Password matches');
                     res.status(200).send({
 
-                        'message': 'User is logged in'
+                        'message': 'User logged in'
                     })
 
-                }else{
+                } else {
 
                     console.log('Password is incorrect');
                     res.status(401).send({
-
-                        'message': `Invalid password ${err.message}`
+                        'message': `A problem occurred. Please check password`
                     })
                 }
             }
-        })
+        }
 
-            if (User) {    // If username entered does not exist
+            if (user) {
 
-                console.log('Invalid Username');
+                console.log('Invalid password');
                 res.status(401).send({
-                        'message': `Invalid username or password`
-                })
+
+                       'message': 'A problem occurred. Please check password'
+               })
+
             }
+        })
 
     } catch (e) {
 
-        console.log(err);
+        console.log(e);
         res.status(400).send({
-
-            'message': `Username and password are required fields ${err}`
-        })
-        res.status(501).send({
-            'message': `MongoDB Exception ${err}`
+            'message': 'A problem occurred. Username and password are required'
         })
         res.status(500).send({
-            'message': `Server has encountered an unexpected error ${err}`
+            'message': 'Server has encountered an unexpected error'
         })
     }
 })
-
 module.exports = router;
+
+
+
 

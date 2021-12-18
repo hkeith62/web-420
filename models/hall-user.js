@@ -14,8 +14,8 @@ var Schema = mongoose.Schema; // Use Mongoose for user model.
 // Schema defining structure of the userSchema document and binds to variable
 var userSchema = new Schema({
 
-    userName: {type: String, required: true}, // Username field is required
-    Password: {type: String, required: true},
+    userName: {type: String},
+    password: {type: String},
     emailAddress: {type: Array}
 
 });
