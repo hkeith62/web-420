@@ -16,7 +16,6 @@ var playerSchema = new Schema({
     first_name: {type: String},
     last_name: {type: String},
     position: {type: String},
-    hire_date: {type: String, default: new Date()},
     annual_salary: {type: Number}
 });
 
