@@ -4,7 +4,7 @@
 ;   Author: Professor Krasso
 ;   Date: 12/15/2021
 ;   Modified By: Keith Hall
-;   Description: This file defines the endpoints for the Team API.
+;   Description: Endpoints for the Team API.
 ===========================================
 */
 // Required modules
@@ -78,24 +78,21 @@ var router = express.Router();
 
     try {
 
-        Team.find({}, function(err, teams) {  // Searches composer documents
+        Team.find({}, function(err, teams) {  // Finds all team documents
 
             if (err) {
-
                 console.log(err);
                 res.status(500).send({
                     'message': `Server has encountered an unexpected error ${err}`
                 })
 
             } else {
-
-                console.log(teams);
+                console.log(teams); // Display team documents in the console
                 res.json(teams);
             }
         })
 
     } catch (e) {
-
         console.log(e);
         res.status(500).send({
             'message': `Server has encountered an unexpected error ${e.message}`
@@ -180,21 +177,18 @@ var router = express.Router();
         await Team.create(newTeam, function(err, team) {
 
             if (err) {
-
                 console.log(err);
                 res.status(501).send({
                     'message': `MongoDB Exception. ${err}`
                 })
 
             } else {
-
-                console.log(`Team was added to MongoDB ${team}`);
+                console.log(`Team was added to MongoDB ${team}`); //Team doc and message displayed in console
                 res.json(team);
             }
         })
 
     } catch (e) {
-
         console.log(e);
         res.status(500).send({
             'message': `Server has encountered an unexpected error ${e.message}`
@@ -256,11 +250,9 @@ var router = express.Router();
  router.post('/teams/:id/players', async(req, res) => {
 
     try {
-
-        Team.findOne({'_id': req.params.id}, function(err, team) {
+        Team.findOne({'_id': req.params.id}, function(err, team) {   // Finds a team document by id entered
 
             if (err) {
-
                 res.status(501).send({
                     'message': `MongoDB Exception: ${err}`
                 }),
@@ -269,18 +261,16 @@ var router = express.Router();
                 })
 
             } else {
-
-                const newPlayer = {
+                const newPlayer = {                    // Player document
                     player_id: req.body.player_id,
                     first_name: req.body.first_name,
                     last_name: req.body.last_name,
                     position: req.body.position,
                     annual_salary: req.body.annual_salary
-
                 };
 
-                team.players.push(newPlayer);
-                team.save(function(err, updatedTeam) {
+                team.players.push(newPlayer);    // Adds player document to team-player array
+                team.save(function(err, updatedTeam) {  // Call the save() function on the returned object and update
 
                     if (err) {
                         res.status(501).send({
@@ -296,13 +286,10 @@ var router = express.Router();
         })
 
     } catch (e) {
-
         res.status(400).send({
-
             'message': `A problem occurred, Id is required ${e.message}`
         }),
         res.status(500).send({
-
             'message': `Server Exception: ${e.message}`
         })
     }
@@ -364,11 +351,9 @@ var router = express.Router();
  router.get('/teams/:id/players', async(req,res) => {
 
     try{
-
         Team.findOne({'_id': req.params.id}, function(err, team) {
 
             if(err) {
-
                 res.status(500).send({
                     'message': `MongoDB Exception: ${err}`
                 }),
@@ -377,14 +362,12 @@ var router = express.Router();
                 })
 
             } else {
-
                 console.log(team);
                 res.status(200).send(team.players)
             }
         })
 
     } catch (e) {
-
         res.status(400).send({
             'message': `A problem occurred. Id required ${err}`
         })
@@ -426,13 +409,10 @@ var router = express.Router();
  router.delete('/teams/:id', async (req, res) => {
 
     try {
-
         const teamDocId = req.params.id;
-
         Team.findByIdAndDelete({'_id': teamDocId}, function(err, team) {
 
             if (err) {
-
                 console.log(err);
                 res.status(401).send({
                     'message': `A problem occurred. Please check id: ${err}`
@@ -442,14 +422,12 @@ var router = express.Router();
                 })
 
             } else {
-
                 console.log('Team was deleted');
                 res.json(team);
             }
         })
 
     } catch (e) {
-
         console.log(e);
         res.status(400).send({
             'message': `A problem occurred. Id is a required field ${e.message}`

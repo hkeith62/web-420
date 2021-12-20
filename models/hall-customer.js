@@ -34,7 +34,7 @@ var customerSchema = new Schema({
 
     firstName: {type: String},
     lastName: {type: String},
-    userName: {type: String, required: true},
+    userName: {type: String},
     invoices: [invoice]          // Two Nested schema: lineItemSchema and invoice
 });
 

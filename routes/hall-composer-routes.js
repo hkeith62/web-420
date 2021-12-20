@@ -37,7 +37,7 @@ var router = express.Router();
  *                 - composerId
  *                 - firstName
  *                 - lastName
- *                 - date_record_created
+ *                 - date_created
  *               properties:
  *                 composerId:
  *                   type: number
@@ -54,17 +54,20 @@ router.get('/composers', async(req, res) => {
 
     try {
 
-        Composer.find({}, function(err, composers) {  // Searches composer documents
+        Composer.find({}, function(err, composers) {  // Finds all composer documents
+
             if (err) {
-                console.log(err);
+                console.log(err); // Console message
                 res.status(500).send({
                     'message': `Server has encountered an unexpected error ${err}`
                 })
+
             } else {
-                console.log(composers);
-                res.json(composers);
+                console.log(composers); // Display composer documents in console
+                res.json(composers);  // Display composer documents in json
             }
         })
+
     } catch (e) {
         console.log(e);
         res.status(500).send({
@@ -115,10 +118,12 @@ router.get('/composers', async(req, res) => {
  *         description: MongoDB exception
  */
  router.get('/composers/:id', async(req, res) => {
-    try {
-        Composer.findOne({'_id': req.params.id}, function(err, composer) {
-            if (err) {
 
+    try {
+        Composer.findOne({'_id': req.params.id}, function(err, composer) { // Finds a composer document by id
+
+            // Error handling
+            if (err) {
                 console.log(err);
                 res.status(401).send({
                     'message': `A problem occurred. Please check id ${err}`
@@ -128,10 +133,11 @@ router.get('/composers', async(req, res) => {
               })
 
             } else {
-                console.log(composer);
+                console.log(composer); // Display composer document matching id in the console
                 res.json(composer);
             }
         })
+
     } catch (e) {
         console.log(e);
         res.status(401).send({
@@ -182,7 +188,9 @@ router.get('/composers', async(req, res) => {
  *         description: MongoDB exception
  */
 router.post('/composers', async(req, res) => {
+
     try {
+
         // JavaScript object containing the key-value pairs submitted in the request body
         const newComposer = {
             firstName: req.body.firstName,
@@ -190,18 +198,22 @@ router.post('/composers', async(req, res) => {
             composerId: req.body.composerId,
             date_created: req.body.date_created
         }
+
         // Accesses parsed request bodies
-        await Composer.create(newComposer, function(err, composer) {
+        await Composer.create(newComposer, function(err, composer) {  //Create newComposer document
+
             if (err) {
                 console.log(err);
                 res.status(501).send({
                     'message': `MongoDB Exception. ${err}`
                 })
+
             } else {
                 console.log(`Composer Added to MongoDB ${composer}`);
                 res.json(composer);
             }
         })
+
     } catch (e) {
         console.log(e);
         res.status(500).send({
@@ -249,24 +261,26 @@ router.post('/composers', async(req, res) => {
 
         var composerDocId = req.params.id;
 
-        Composer.findOne({'_id': composerDocId}, function(err, composer) {
+        Composer.findOne({'_id': composerDocId}, function(err, composer) { // Finds a composer document by id
 
             if (err) {
                 console.log(err);
                 res.status(501).send({
                     'message': `MongoDB Exception: ${err}`
                 })
+
             } else {
                 console.log(composer);
-
-                composer.set({
+                composer.set({     //Update the returned composer object by using the set() function
                     type: req.body.type
                 });
 
-                composer.save(function(err, updatedComposer) {
+                composer.save(function(err, updatedComposer) {   //Call the save() function on the returned composer object
+
                     if (err) {
                         console.log(err);
                         res.json(updatedComposer);
+
                     } else {
                         console.log(updatedComposer);
                         res.json(updatedComposer);
@@ -313,7 +327,7 @@ router.post('/composers', async(req, res) => {
     try {
         const composerDocId = req.params.id;
 
-        Composer.findByIdAndDelete({'_id': composerDocId}, function(err, composer) {
+        Composer.findByIdAndDelete({'_id': composerDocId}, function(err, composer) {  //Call the findByIdAndDelete() function on the Composer model
             if (err) {
 
                 console.log(err);

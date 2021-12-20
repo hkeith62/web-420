@@ -13,6 +13,84 @@ var Customer = require('../models/hall-customer');   // Binds Customer Module to
 
 var router = express.Router();
 
+// OpenAPI Specification
+/**
+ * findAllCustomers
+ * @openapi
+ * /api/customers:
+ *   get:
+ *     tags:
+ *       - Customers
+ *     description: Returns a list of all customers in MongoDB
+ *     summary: List all customers
+ *     responses:
+ *       '200':
+ *         description: Returns an array of customers
+ *         content:
+ *           application/json:
+ *             schema:
+ *             type: array
+ *             description: List customers by first and last name, username, and invoices
+ *             items:
+ *               type: array
+ *               required:
+ *                 - firstName
+ *                 - lastName
+ *                 - userName
+ *                 - invoices
+ *               properties:
+ *                 firstName:
+ *                   type: string
+ *                 lastName:
+ *                   type: string
+ *                 userName:
+ *                   type: string
+ *                 invoices:
+ *                   type: array
+ *                   items:
+ *                       type: object
+ *                       properties:
+ *                           subtotal:
+ *                               type: number
+ *                           tax:
+ *                               type: number
+ *                           dateCreated:
+ *                               type: string
+ *                           dateShipped:
+ *                               type: string
+ *                           lineItems:
+ *                               type: array
+ *       '500':
+ *         description: Server has encountered an unexpected error
+ *       '501':
+ *         description: MongoDB Exception
+ */
+ router.get('/customers', async(req, res) => {
+
+    try {
+
+        Customer.find({}, function(err, customer) {  // Finds all team documents
+
+            if (err) {
+                console.log(err);
+                res.status(500).send({
+                    'message': `Server has encountered an unexpected error ${err}`
+                })
+
+            } else {
+                console.log(customer); // Display team documents in the console
+                res.json(customer);
+            }
+        })
+
+    } catch (e) {
+        console.log(e);
+        res.status(500).send({
+            'message': `Server has encountered an unexpected error ${e.message}`
+        })
+    }
+})
+
 /**
  * createCustomer
  * @openapi
@@ -31,6 +109,7 @@ var router = express.Router();
  *               - firstName
  *               - lastName
  *               - userName
+ *               - invoices
  *             properties:
  *               firstName:
  *                 type: string
@@ -38,6 +117,8 @@ var router = express.Router();
  *                 type: string
  *               userName:
  *                 type: string
+ *               invoices:
+ *                 type: array
  *     responses:
  *       '200':
  *          description: |
@@ -62,7 +143,8 @@ var router = express.Router();
         var newCustomer = {                      // JavaScript object containing the key-value pairs to be submitted in the request body
             firstName: req.body.firstName,
             lastName: req.body.lastName,
-            userName: req.body.userName
+            userName: req.body.userName,
+            invoices: req.body.invoices
          }
 
         Customer.findOne({'userName': req.body.userName}, function(err, customers) { // Search MongDB for first customer document with username matching the request body
